@@ -1,45 +1,57 @@
 #!/usr/bin/python
-# Generate a simple web slideshow
-# for use with a Chromecast.
-#
-# Copyright (c) 2014 by Jim Lawless
-# See MIT/X11 license at
-# http://www.mailsend-online.com/license2014.php
-#
+"""
+Generate a simple web slideshow for use with a Chromecast.
 
+Copyright (c) 2014 by Jim Lawless
+See MIT/X11 license at
+http://www.mailsend-online.com/license2014.php
+"""
+
+import argparse
 import os
 import SimpleHTTPServer
 import SocketServer
 import string
 
 delay_millis = "10000"
-images = os.listdir('img')
 html = ''
 
-# Build an HTML snippet that contains
-# a JavaScript list of string-literals.
-for img in images:
-    html = html + '\"img/' + img + '\"'
-    # Place a comma on the end
-    # unless this is the last item in
-    # the list
-    if img != images[-1]:
-        html = html + ','
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Generate a simple web '
+                                     'slideshow for use with a Chromecast.')
+    parser.add_argument(
+        '-p', '--port', default=80, type=int,
+        help='Port number.')
+    args = parser.parse_args()
 
-with open('template.htm', "r") as tplfile:
-    payload = tplfile.read()
+    images = os.listdir('img')
 
-# Replace $$1 and $$2 with the delay
-# in milliseconds and generated list
-# of images.  Write the output to
-# index.html
-payload = string.replace(payload, "$$1", delay_millis)
-payload = string.replace(payload, "$$2", html)
-with open("index.html", "w") as indexfile:
-    indexfile.write(payload)
+    # Build an HTML snippet that contains
+    # a JavaScript list of string-literals.
+    for img in images:
+        html = html + '\"img/' + img + '\"'
+        # Place a comma on the end
+        # unless this is the last item in
+        # the list
+        if img != images[-1]:
+            html = html + ','
 
-# Now, start serving up pages
-Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-httpd = SocketServer.TCPServer(("", 80), Handler)
-print "HTTP server running..."
-httpd.serve_forever()
+    with open('template.htm', "r") as tplfile:
+        payload = tplfile.read()
+
+    # Replace $$1 and $$2 with the delay
+    # in milliseconds and generated list
+    # of images.  Write the output to
+    # index.html
+    payload = string.replace(payload, "$$1", delay_millis)
+    payload = string.replace(payload, "$$2", html)
+    with open("index.html", "w") as indexfile:
+        indexfile.write(payload)
+
+    # Now, start serving up pages
+    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    httpd = SocketServer.TCPServer(("", args.port), Handler)
+    print "HTTP server running..."
+    httpd.serve_forever()
+
+# End of file
