@@ -29,6 +29,8 @@ if __name__ == '__main__':
     # Build an HTML snippet that contains
     # a JavaScript list of string-literals.
     for img in images:
+        if img in [".DS_Store"] or not os.path.isfile('img/' + img):
+            continue
         html = html + '\"img/' + img + '\"'
         # Place a comma on the end
         # unless this is the last item in
