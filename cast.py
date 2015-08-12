@@ -13,8 +13,6 @@ import SimpleHTTPServer
 import SocketServer
 import string
 
-html = ''
-
 
 def open_in_browser(port):
     import webbrowser
@@ -22,39 +20,61 @@ def open_in_browser(port):
     webbrowser.open(url, new=2)  # 2 = open in a new tab, if possible
 
 
+def get_images_nonrecursive():
+    images = []
+    files = os.listdir('img')
+    for filename in files:
+        full = os.path.join("img", filename)
+        if filename in [".DS_Store"] or not os.path.isfile(full):
+            continue
+        images.append('"' + full + '"')
+    return images
+
+
+def get_images_recursive():
+    images = []
+    for root, subfolders, files in os.walk("img"):
+        for filename in files:
+            if filename in [".DS_Store"]:
+                continue
+            full = os.path.join(root, filename)
+            images.append('"' + full + '"')
+    return images
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Generate a simple web '
                                      'slideshow for use with a Chromecast.')
     parser.add_argument(
-        '-p', '--port', default=80, type=int,
-        help='Port number.')
-    parser.add_argument(
-        '-d', '--delay', default=10, type=int,
-        help='Delay in seconds between images.')
+        '-r', '--recursive', action='store_true',
+        help="Recurse directories to find images.")
     parser.add_argument(
         '--random', action='store_true',
         help="Randomise image order.")
     parser.add_argument(
+        '-d', '--delay', default=10, type=int,
+        help='Delay in seconds between images.')
+    parser.add_argument(
         '-b', '--browser', action='store_true',
         help="Automatically open the slideshow in a web browser.")
+    parser.add_argument(
+        '-p', '--port', default=80, type=int,
+        help='Port number.')
     args = parser.parse_args()
 
-    images = os.listdir('img')
+    # Build an HTML snippet that contains
+    # a JavaScript list of string-literals.
+    if args.recursive:
+        images = get_images_recursive()
+    else:
+        images = get_images_nonrecursive()
+
     if args.random:
         import random
         random.shuffle(images)
 
-    # Build an HTML snippet that contains
-    # a JavaScript list of string-literals.
-    for img in images:
-        if img in [".DS_Store"] or not os.path.isfile('img/' + img):
-            continue
-        html = html + '\"img/' + img + '\"'
-        # Place a comma on the end
-        # unless this is the last item in
-        # the list
-        if img != images[-1]:
-            html = html + ','
+    # Comma separate
+    html = ",".join(images)
 
     with open('template.htm', "r") as tplfile:
         payload = tplfile.read()
