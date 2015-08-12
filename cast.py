@@ -13,7 +13,6 @@ import SimpleHTTPServer
 import SocketServer
 import string
 
-delay_millis = "10000"
 html = ''
 
 
@@ -33,11 +32,17 @@ if __name__ == '__main__':
         '-d', '--delay', default=10, type=int,
         help='Delay in seconds between images.')
     parser.add_argument(
+        '--random', action='store_true',
+        help="Randomise image order.")
+    parser.add_argument(
         '-b', '--browser', action='store_true',
         help="Automatically open the slideshow in a web browser.")
     args = parser.parse_args()
 
     images = os.listdir('img')
+    if args.random:
+        import random
+        random.shuffle(images)
 
     # Build an HTML snippet that contains
     # a JavaScript list of string-literals.
