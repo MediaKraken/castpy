@@ -17,16 +17,37 @@ img {
 <body onload="nextOne(); setInterval('nextOne();',$$1);">
 
 <script type="text/javascript">
+
    var imgList=[
       $$2
    ];
-   var ctr=0;
-   function nextOne() {
+   var ctr=-1;
+   function prevOne() {
+      ctr--;
+      if (ctr < 0) {
+        ctr = imgList.length + ctr;
+      }
       ctr%=imgList.length;
       document.getElementById("theImg").src=
          imgList[ctr];
-      ctr++;
    }
+   function nextOne() {
+      ctr++;
+      ctr%=imgList.length;
+      document.getElementById("theImg").src=
+         imgList[ctr];
+   }
+
+  document.onkeydown = function(e) {
+    switch (e.keyCode) {
+      case 37: // left
+        prevOne();
+        break;
+      case 39: // right
+        nextOne();
+        break;
+      }
+  };
 
 </script>
 
