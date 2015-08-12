@@ -18,24 +18,25 @@ img {
 
 <script type="text/javascript">
 
-   var imgList=[
+    var imgList=[
       $$2
    ];
-   var ctr=-1;
+   var ctr = -1;
+   function setImage(ctr) {
+     document.getElementById("theImg").src =
+             imgList[ctr];
+   }
    function prevOne() {
       ctr--;
       if (ctr < 0) {
         ctr = imgList.length + ctr;
       }
-      ctr%=imgList.length;
-      document.getElementById("theImg").src=
-         imgList[ctr];
+      setImage(ctr);
    }
    function nextOne() {
       ctr++;
-      ctr%=imgList.length;
-      document.getElementById("theImg").src=
-         imgList[ctr];
+      ctr %= imgList.length;
+      setImage(ctr);
    }
 
   document.onkeydown = function(e) {
