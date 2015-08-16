@@ -20,31 +20,39 @@ def open_in_browser(port):
     webbrowser.open(url, new=2)  # 2 = open in a new tab, if possible
 
 
-def get_images_nonrecursive():
+def get_images_nonrecursive(dir):
     images = []
-    files = os.listdir('img')
+    files = os.listdir(dir)
     for filename in files:
-        full = os.path.join("img", filename)
+        full = os.path.join(dir, filename)
         if filename in [".DS_Store"] or not os.path.isfile(full):
             continue
         images.append('"' + full + '"')
     return images
 
 
-def get_images_recursive():
+def get_images_recursive(dir):
     images = []
-    for root, subfolders, files in os.walk("img"):
+    for root, subfolders, files in os.walk(dir):
         for filename in files:
-            if filename in [".DS_Store"]:
+            if filename in [".DS_Store", "Thumbs.db"]:
                 continue
             full = os.path.join(root, filename)
             images.append('"' + full + '"')
     return images
 
 
+def get_script_path():
+    """ Where is cast.py being called from? """
+    return os.path.dirname(os.path.realpath(__file__))
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Generate a simple web '
                                      'slideshow for use with a Chromecast.')
+    parser.add_argument(
+        '--dir',
+        help="Directory of images.")
     parser.add_argument(
         '-r', '--recursive', action='store_true',
         help="Recurse directories to find images.")
@@ -65,9 +73,9 @@ if __name__ == '__main__':
     # Build an HTML snippet that contains
     # a JavaScript list of string-literals.
     if args.recursive:
-        images = get_images_recursive()
+        images = get_images_recursive(args.dir)
     else:
-        images = get_images_nonrecursive()
+        images = get_images_nonrecursive(args.dir)
 
     if args.random:
         import random
@@ -76,7 +84,7 @@ if __name__ == '__main__':
     # Comma separate
     html = ",".join(images)
 
-    with open('template.htm', "r") as tplfile:
+    with open(os.path.join(get_script_path(), 'template.htm'), "r") as tplfile:
         payload = tplfile.read()
 
     # Replace $$1 and $$2 with the delay
