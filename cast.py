@@ -51,7 +51,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Generate a simple web '
                                      'slideshow for use with a Chromecast.')
     parser.add_argument(
-        '--dir',
+        '--dir', default="img",
         help="Directory of images.")
     parser.add_argument(
         '-r', '--recursive', action='store_true',
