@@ -27,7 +27,7 @@ def get_images_nonrecursive(dir):
         full = os.path.join(dir, filename)
         if filename in [".DS_Store"] or not os.path.isfile(full):
             continue
-        images.append('"' + full + '"')
+        images.append('"' + dir + "/" + filename + '"')
     return images
 
 
@@ -38,7 +38,7 @@ def get_images_recursive(dir):
             if filename in [".DS_Store", "Thumbs.db"]:
                 continue
             full = os.path.join(root, filename)
-            images.append('"' + full + '"')
+            images.append('"' + dir + "/" + filename + '"')
     return images
 
 
