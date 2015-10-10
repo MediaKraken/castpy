@@ -68,7 +68,7 @@ if __name__ == '__main__':
         '-b', '--browser', action='store_true',
         help="Automatically open the slideshow in a web browser.")
     parser.add_argument(
-        '-p', '--port', default=80, type=int,
+        '-p', '--port', default=8000, type=int,
         help='Port number.')
     args = parser.parse_args()
 
