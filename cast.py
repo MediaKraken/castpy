@@ -20,25 +20,26 @@ def open_in_browser(port):
     webbrowser.open(url, new=2)  # 2 = open in a new tab, if possible
 
 
-def get_images_nonrecursive(dir):
+def images_list(dir, files):
     images = []
-    files = os.listdir(dir)
     for filename in files:
         full = os.path.join(dir, filename)
-        if filename in [".DS_Store"] or not os.path.isfile(full):
+        if filename in [".DS_Store",  "Thumbs.db"] or not os.path.isfile(full):
             continue
         images.append('"' + dir + "/" + filename + '"')
+    return images
+
+
+def get_images_nonrecursive(dir):
+    files = os.listdir(dir)
+    images = images_list(dir, files)
     return images
 
 
 def get_images_recursive(dir):
     images = []
     for root, subfolders, files in os.walk(dir):
-        for filename in files:
-            if filename in [".DS_Store", "Thumbs.db"]:
-                continue
-            full = os.path.join(root, filename)
-            images.append('"' + root + "/" + filename + '"')
+        images.extend(images_list(root, files))
     return images
 
 
