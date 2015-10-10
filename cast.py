@@ -48,8 +48,10 @@ def get_script_path():
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Generate a simple web '
-                                     'slideshow for use with a Chromecast.')
+    parser = argparse.ArgumentParser(
+        description='Generate a simple web slideshow for use with a '
+                    'Chromecast.',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
         '--dir', default="img",
         help="Directory of images.")
