@@ -38,7 +38,7 @@ def get_images_recursive(dir):
             if filename in [".DS_Store", "Thumbs.db"]:
                 continue
             full = os.path.join(root, filename)
-            images.append('"' + dir + "/" + filename + '"')
+            images.append('"' + root + "/" + filename + '"')
     return images
 
 
