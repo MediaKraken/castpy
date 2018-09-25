@@ -9,30 +9,29 @@ http://www.mailsend-online.com/license2014.php
 
 import argparse
 import os
-import SimpleHTTPServer
-import SocketServer
 import string
+
+import http.server
+import socketserver
 
 
 def open_in_browser(port):
     import webbrowser
-    url = "http://localhost:" + str(port)
-    webbrowser.open(url, new=2)  # 2 = open in a new tab, if possible
+    webbrowser.open("http://localhost:" + str(port), new=2)  # 2 = open in a new tab, if possible
 
 
 def images_list(dir, files):
     images = []
     for filename in files:
         full = os.path.join(dir, filename)
-        if filename in [".DS_Store",  "Thumbs.db"] or not os.path.isfile(full):
+        if filename in [".DS_Store", "Thumbs.db"] or not os.path.isfile(full):
             continue
         images.append('"' + dir + "/" + filename + '"')
     return images
 
 
 def get_images_nonrecursive(dir):
-    files = os.listdir(dir)
-    images = images_list(dir, files)
+    images = images_list(dir, os.listdir(dir))
     return images
 
 
@@ -100,9 +99,9 @@ if __name__ == '__main__':
         indexfile.write(payload)
 
     # Now, start serving up pages
-    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
-    httpd = SocketServer.TCPServer(("", args.port), Handler)
-    print "HTTP server running..."
+    Handler = http.server.SimpleHTTPRequestHandler
+    httpd = socketserver.TCPServer(("", args.port), Handler)
+    print("HTTP server running...")
     if args.browser:
         open_in_browser(args.port)
     httpd.serve_forever()
